@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { ENV } from "../lib/env.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
+import cloudinary from "../lib/cloudinary.js";
 
 
 export const signup = async (req, res) => {
@@ -91,4 +92,32 @@ try {
 } catch (error) {
     
 }
+}
+
+export const logout=async()=>{
+  res.cookie("jwt","",{maxAge:0});
+  res.status(200).json({message:"Successfully logged out"});
+}
+
+export const updateProfilepic=async(req,res)=>{
+  const {profilePic}=req.body;
+  if(!profilePic){
+    return res.status(400).json({message:"Profile pic is required"});
+  }
+  try {
+      const userId=req.user._id;
+      const uploadRespond=await cloudinary.uploader.upload(profilePic);
+
+      const uploadUser=await User.findByIdAndUpdate(
+        userId,
+        {profilePic:uploadRespond.secure_url},
+        {new:true}
+      );
+
+
+      res.status(200).json({uploadUser})
+    } catch (error) {
+      res.status(500).json({message:"Internal server eroor"});
+      console.log("Error in upload profile pic controller",error);
+    }
 }
