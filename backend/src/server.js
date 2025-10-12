@@ -4,7 +4,10 @@ import {connectDB} from './lib/db.js'
 import messageRoutes from "./routes/message.route.js";
 import authRoute from './routes/auth.route.js'
 import path from 'path'
+import cookieParser from "cookie-parser"
 const app=express();
+app.use(cookieParser());
+
 
 const __dirname = path.resolve();
 
