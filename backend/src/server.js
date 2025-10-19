@@ -5,6 +5,7 @@ import messageRoutes from "./routes/message.route.js";
 import authRoute from './routes/auth.route.js'
 import path from 'path'
 import cookieParser from "cookie-parser"
+import cors from "cors"
 const app=express();
 app.use(cookieParser());
 
@@ -13,7 +14,8 @@ const __dirname = path.resolve();
 
 const PORT= ENV.PORT || 3000;
 
-app.use(express.json())
+app.use(express.json());
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use("/api/auth",authRoute)
 app.use("/api/messages",messageRoutes)
 
